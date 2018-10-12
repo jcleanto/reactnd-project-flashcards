@@ -1,25 +1,26 @@
 {
   "expo": {
-    "name": "reactnd-project-flashcards",
-    "description": "This project is really great.",
-    "slug": "reactnd-project-flashcards",
-    "privacy": "public",
+    "name": "github.com/jcleanto/reactnd-project-flashcards",
+    "description": "jcleanto/reactnd-project-flashcards @ Oct 8, 2018",
+    "slug": "snack-SkqCHKpqQ",
+    "privacy": "unlisted",
     "sdkVersion": "30.0.0",
-    "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+    "primaryColor": "#cccccc",
+    "icon": "https://d1wp6m56sqw74a.cloudfront.net/~assets/c9aa1be8a6a6fe81e20c3ac4106a2ebc",
+    "loading": {
+      "icon": "https://d1wp6m56sqw74a.cloudfront.net/~assets/c9aa1be8a6a6fe81e20c3ac4106a2ebc",
+      "hideExponentText": false
     },
-    "updates": {
-      "fallbackToCacheTimeout": 0
+    "packagerOpts": {
+      "assetExts": [
+        "ttf",
+        "mp4",
+        "otf",
+        "xml"
+      ]
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
       "supportsTablet": true
     }
