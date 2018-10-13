@@ -6,7 +6,7 @@ export const FormErrors = ({ formErrors }) => (
     {Object.keys(formErrors).map((fieldName, i) => {
       if (formErrors[fieldName].length > 0) {
         return (
-          <Text style={{color: 'red'}} key={i}>
+          <Text style={{color: 'red', textAlign: 'center'}} key={i}>
             {fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} {formErrors[fieldName]}
           </Text>
         );

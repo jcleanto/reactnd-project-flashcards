@@ -11,7 +11,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { darkGray } from '../utils/colors';
+import { darkGray, lightBlue } from '../utils/colors';
 import { FormErrors } from './FormErrors';
 import { SubmitButton } from './SubmitButton';
 import { addCard } from '../actions';
@@ -143,6 +143,7 @@ class AddCard extends Component {
           <SubmitButton
             onPress={this.onSubmit}
             disabled={!answerValid || !questionValid}
+            text={'Create Card'}
           />
         </ScrollView>
       </KeyboardAvoidingView>
@@ -161,16 +162,17 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   inputText: {
-    fontSize: 32,
+    fontSize: 22,
     borderRadius: 6,
-    borderColor: darkGray,
+    borderColor: lightBlue,
     borderWidth: 1,
     margin: 10,
     padding: 10,
   },
   text: {
-    fontSize: 20,
+    fontSize: 16,
     marginLeft: 10,
+    color: lightBlue,
   },
 });
 

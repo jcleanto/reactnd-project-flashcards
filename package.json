@@ -1,17 +1,25 @@
 {
-  "name": "github.com/jcleanto/reactnd-project-flashcards",
-  "version": "0.0.0",
-  "description": "jcleanto/reactnd-project-flashcards @ Oct 8, 2018",
-  "author": null,
+  "name": "reactnd-project-flashcards",
+  "version": "0.0.1",
+  "description": "jcleanto/reactnd-project-flashcards @ Oct 12, 2018",
+  "author": "Jose Cleanto",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "eject": "expo eject"
+  },
   "dependencies": {
-    "expo": "^30.0.0",
+    "expo": "^30.0.1",
+    "global": "^4.3.2",
     "react": "16.3.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",
-    "react-navigation": "2.17.0",
-    "react-redux": "5.0.7",
-    "redux": "4.0.0",
-    "redux-form": "7.4.2"
+    "react-native": "^0.57.3",
+    "react-native-swipeout": "^2.3.6",
+    "react-native-vector-icons": "^6.0.2",
+    "react-navigation": "^2.18.0",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.1"
   }
 }

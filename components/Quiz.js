@@ -6,17 +6,37 @@ import {
   StyleSheet,
   Platform,
   Animated,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { white, green, red, orange, darkGray, black, gray } from '../utils/colors';
-import { FontAwesome, Ionicons } from '@expo/vector-icons'
+import {
+  white,
+  green,
+  red,
+  orange,
+  darkGray,
+  black,
+  gray,
+  aliceBlue,
+  mediumGray,
+  mediumGreen,
+  indianRed,
+  lightBlue,
+  borderAliceBlue,
+} from '../utils/colors';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import {
+  clearLocalNotification,
+  setLocalNotification
+} from '../utils/helpers'
 
 function CorrectAnswerBtn({ onPress }) {
   return (
     <TouchableOpacity
       style={
-        Platform.OS === 'ios' ? styles.iosCorrectAnswerBtn : styles.androidCorrectAnswerBtn
+        Platform.OS === 'ios'
+          ? styles.iosCorrectAnswerBtn
+          : styles.androidCorrectAnswerBtn
       }
       onPress={onPress}>
       <Text style={styles.btnText}>Correct</Text>
@@ -28,10 +48,38 @@ function IncorrectAnswerBtn({ onPress }) {
   return (
     <TouchableOpacity
       style={
-        Platform.OS === 'ios' ? styles.iosIncorrectAnswerBtn : styles.androidIncorrectAnswerBtn
+        Platform.OS === 'ios'
+          ? styles.iosIncorrectAnswerBtn
+          : styles.androidIncorrectAnswerBtn
       }
       onPress={onPress}>
       <Text style={styles.btnText}>Incorrect</Text>
+    </TouchableOpacity>
+  );
+}
+
+function BackDeckBtn({ onPress }) {
+  return (
+    <TouchableOpacity
+      style={
+        Platform.OS === 'ios' ? styles.iosBackDeckBtn : styles.androidBackDeckBtn
+      }
+      onPress={onPress}>
+      <Text style={styles.backDeckBtnText}>Back to Deck</Text>
+    </TouchableOpacity>
+  );
+}
+
+function RestartQuizBtn({ onPress }) {
+  return (
+    <TouchableOpacity
+      style={
+        Platform.OS === 'ios'
+          ? styles.iosRestartQuizBtn
+          : styles.androidRestartQuizBtn
+      }
+      onPress={onPress}>
+      <Text style={styles.restartQuizBtnText}>Restart Quiz</Text>
     </TouchableOpacity>
   );
 }
@@ -40,11 +88,11 @@ class Quiz extends Component {
   state = {
     question: '',
     answer: '',
-    questions: this.props.deck.questions,   
+    questions: [...this.props.deck.questions],
     finished: false,
     flipped: false,
     numberOfCorrects: 0,
-    questionIndex: 0
+    questionIndex: 0,
   };
 
   static navigationOptions = ({ navigation }) => {
@@ -63,46 +111,47 @@ class Quiz extends Component {
     this.value = 0;
     this.animatedValue.addListener(({ value }) => {
       this.value = value;
-    })
+    });
     this.frontInterpolate = this.animatedValue.interpolate({
       inputRange: [0, 180],
       outputRange: ['0deg', '180deg'],
-    })
+    });
     this.backInterpolate = this.animatedValue.interpolate({
       inputRange: [0, 180],
-      outputRange: ['180deg', '360deg']
-    })
+      outputRange: ['180deg', '360deg'],
+    });
   }
 
   flipCard() {
     if (this.value >= 90) {
-      Animated.spring(this.animatedValue,{
+      Animated.spring(this.animatedValue, {
         toValue: 0,
         friction: 8,
-        tension: 10
+        tension: 10,
       }).start();
     } else {
-      Animated.spring(this.animatedValue,{
+      Animated.spring(this.animatedValue, {
         toValue: 180,
         friction: 8,
-        tension: 10
+        tension: 10,
       }).start();
     }
     this.setState({
-      flipped: !this.state.flipped
-    });    
+      flipped: !this.state.flipped,
+    });
   }
 
   shiftQuestions = () => {
-    const { questions } = this.state;
-    const arrQuestions = [...questions];
+    //const { questions } = this.state;
+    const arrQuestions = this.state.questions;
     let item = arrQuestions.shift();
     if (item !== undefined) {
       this.setState({
         question: item.question,
         answer: item.answer,
         questions: arrQuestions,
-        questionIndex: ++this.state.questionIndex
+        questionIndex: ++this.state.questionIndex,
+        finished: false,
       });
     } else {
       this.setState({
@@ -111,77 +160,138 @@ class Quiz extends Component {
         finished: true,
         questionIndex: 0,
       });
+      clearLocalNotification()
+        .then(setLocalNotification);
     }
+  };
+
+  restartQuiz = () => {
+    const arrQuestions = [...this.props.deck.questions];
+    let item = arrQuestions.shift();
+    this.setState({
+      question: item.question,
+      answer: item.answer,
+      questions: arrQuestions,
+      finished: false,    
+      //flipped: false,
+      questionIndex: 1,
+      numberOfCorrects: 0,
+    });
   }
 
-  answer = (type) => {
+  answer = type => {
     if (type === 'correct') {
       this.setState({
-        numberOfCorrects: ++this.state.numberOfCorrects
+        numberOfCorrects: ++this.state.numberOfCorrects,
       });
     }
     this.shiftQuestions();
-  }
+  };
 
   render() {
     const { deckId, deck } = this.props;
-    const { question, answer, flipped, questionIndex, finished, numberOfCorrects } = this.state;
+    const {
+      question,
+      answer,
+      flipped,
+      questionIndex,
+      finished,
+      numberOfCorrects,
+    } = this.state;
 
     const frontAnimatedStyle = {
-      transform: [
-        { rotateY: this.frontInterpolate}
-      ]
-    }
+      transform: [{ rotateY: this.frontInterpolate }],
+    };
     const backAnimatedStyle = {
-      transform: [
-        { rotateY: this.backInterpolate }
-      ]
-    }
+      transform: [{ rotateY: this.backInterpolate }],
+    };
 
-    const flipText = (flipped)?'Question':'Answer';
+    const flipText = flipped ? 'Question' : 'Answer';
 
     return (
-      
-      <ScrollView style={{flex:1}} contentContainerStyle={{flex:1}}>
-        {!finished &&
-        <View style={styles.detail}>
-          <View style={{ flex:3 }}>
-            <View style={{flex:3, alignItems: 'stretch', justifyContent:'stretch'}}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
+        {!finished && (
+          <View style={styles.detail}>
+            <View style={{ flex: 3 }}>
               <View>
-                <Text style={{color: darkGray}}>{questionIndex}/{deck.questions.length}</Text>
+                <Text style={{ color: mediumGray }}>
+                  {questionIndex}/{deck.questions.length}
+                </Text>
               </View>
-              <Animated.View style={[styles.flipCard, frontAnimatedStyle]}>
-                <Text style={{ fontSize: 46, color: white }}>{question}</Text>
-              </Animated.View>
-              <Animated.View style={[backAnimatedStyle, styles.flipCard, styles.flipCardBack]}>
-                <Text style={{ fontSize: 36, color: white }}>{answer}</Text>
-              </Animated.View>
+              <View
+                style={{
+                  flex: 3,
+                  alignItems: 'stretch',
+                  justifyContent: 'stretch',
+                }}>
+                <Animated.View style={[styles.flipCard, frontAnimatedStyle]}>
+                  <Text style={{ fontSize: 46, color: mediumGray }}>{question}</Text>
+                </Animated.View>
+                <Animated.View
+                  style={[
+                    backAnimatedStyle,
+                    styles.flipCard,
+                    styles.flipCardBack,
+                  ]}>
+                  <Text style={{ fontSize: 36, color: mediumGray }}>{answer}</Text>
+                </Animated.View>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignContent: 'center',
+                }}>
+                <TouchableOpacity onPress={() => this.flipCard()}>
+                  <Text
+                    style={{ color: indianRed, fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>
+                    Show {flipText}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={{flex:1, justifyContent:'center', alignContent:'center'}}>
-              <TouchableOpacity onPress={() => this.flipCard()}>
-                <Text style={{color:red, fontWeight:'bold', fontSize:22}}>{flipText}</Text>
-              </TouchableOpacity>
+            <View style={{ flex: 1 }}>
+              <CorrectAnswerBtn onPress={() => this.answer('correct')} />
+              <View style={{ height: 20 }} />
+              <IncorrectAnswerBtn onPress={() => this.answer('incorrect')} />
             </View>
           </View>
-          <View style={{ flex: 1 }}>
-            <CorrectAnswerBtn onPress={() => this.answer('correct')}/>
-            <View style={{height:20}} />
-            <IncorrectAnswerBtn onPress={() => this.answer('incorrect')} />
+        )}
+        {finished && (
+          <View
+            style={[
+              styles.detailScore,
+              { alignItems: 'center', alignContent: 'center' },
+            ]}>
+            <FontAwesome name="handshake-o" size={130} color={darkGray} />
+            {numberOfCorrects === deck.questions.length && (
+              <Text style={{ fontSize: 36, textAlign: 'center' }}>
+                Congratulations your score is:
+              </Text>
+            )}
+            {numberOfCorrects !== deck.questions.length && (
+              <Text style={{ fontSize: 36, textAlign: 'center' }}>
+                Nice your score is:
+              </Text>
+            )}
+            <Text style={{ fontSize: 126, color: orange }}>
+              {numberOfCorrects}
+            </Text>
+            <View style={{ flex: 1 }}>
+              <BackDeckBtn
+                onPress={() =>
+                  this.props.navigation.goBack()
+                }
+              />
+              <View style={{ height: 20 }} />
+              <RestartQuizBtn
+                onPress={
+                  this.restartQuiz
+                }
+              />
+            </View>
           </View>
-        </View>
-        }
-        {finished && 
-          <View style={[styles.detail, {alignItems:'center', alignContent:'center'}]}>
-            <FontAwesome name='handshake-o' size={130} color={darkGray} />
-            {numberOfCorrects === deck.questions.length && 
-              <Text style={{fontSize:36, textAlign:'center'}}>Congratulations your score is:</Text>
-            }
-            {numberOfCorrects !== deck.questions.length && 
-              <Text style={{fontSize:36, textAlign:'center'}}>Nice your score is:</Text>
-            }
-            <Text style={{fontSize:166, color:orange}}>{numberOfCorrects}</Text>  
-          </View>        
-        }
+        )}
       </ScrollView>
     );
   }
@@ -196,22 +306,43 @@ const styles = StyleSheet.create({
     borderRadius: Platform.OS === 'ios' ? 16 : 2,
     padding: 20,
   },
+  detailScore: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: aliceBlue,
+    borderRadius: 2,
+    borderColor: borderAliceBlue,
+    border: 1,
+    padding: 20,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 17,
+    marginBottom: 17,
+    shadowRadius: 1,
+    shadowOpacity: 0.2,
+    shadowColor: 'rgba(0, 0, 0, 0.24)',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+  },
   iosCorrectAnswerBtn: {
-    backgroundColor: green,
+    backgroundColor: mediumGreen,
     padding: 10,
-    borderColor: black,  
-    borderRadius: 7,
+    borderColor: black,
+    borderRadius: 30,
     height: 45,
     marginLeft: 20,
     marginRight: 20,
   },
   androidCorrectAnswerBtn: {
-    backgroundColor: green,
+    backgroundColor: mediumGreen,
     padding: 10,
     paddingLeft: 30,
     paddingRight: 30,
     height: 45,
-    borderRadius: 2,
+    borderRadius: 30,
     alignSelf: 'flex-end',
     justifyContent: 'center',
     alignItems: 'center',
@@ -222,21 +353,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   iosIncorrectAnswerBtn: {
-    backgroundColor: red,
+    backgroundColor: indianRed,
     padding: 10,
-    borderColor: black,  
-    borderRadius: 7,
+    borderColor: black,
+    borderRadius: 30,
     height: 45,
     marginLeft: 20,
     marginRight: 20,
   },
   androidIncorrectAnswerBtn: {
-    backgroundColor: red,
+    backgroundColor: indianRed,
     padding: 10,
     paddingLeft: 30,
     paddingRight: 30,
     height: 45,
-    borderRadius: 2,
+    borderRadius: 30,
     alignSelf: 'flex-end',
     justifyContent: 'center',
     alignItems: 'center',
@@ -244,17 +375,68 @@ const styles = StyleSheet.create({
   flipCard: {
     flex: 1,
     padding: 10,
-    borderRadius: 7,
+    borderRadius: 2,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: gray,
+    backgroundColor: aliceBlue,
     backfaceVisibility: 'hidden',
   },
   flipCardBack: {
-    backgroundColor: gray,
+    backgroundColor: aliceBlue,
     position: 'absolute',
-    width:'100%',
-    height:'100%'
+    width: '100%',
+    height: '100%',
+  },
+  iosBackDeckBtn: {
+    backgroundColor: white,
+    padding: 10,
+    borderColor: black,
+    borderRadius: 30,
+    height: 45,
+    marginLeft: 20,
+    marginRight: 20,
+  },
+  androidBackDeckBtn: {
+    backgroundColor: white,
+    padding: 10,
+    paddingLeft: 30,
+    paddingRight: 30,
+    height: 45,
+    borderRadius: 30,
+    alignSelf: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backDeckBtnText: {
+    color: lightBlue,
+    fontSize: 22,
+    textAlign: 'center',
+    width: 200
+  },
+  iosRestartQuizBtn: {
+    backgroundColor: lightBlue,
+    padding: 10,
+    borderColor: black,
+    borderRadius: 30,
+    height: 45,
+    marginLeft: 20,
+    marginRight: 20,
+  },
+  androidRestartQuizBtn: {
+    backgroundColor: lightBlue,
+    padding: 10,
+    paddingLeft: 30,
+    paddingRight: 30,
+    height: 45,
+    borderRadius: 30,
+    alignSelf: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  restartQuizBtnText: {
+    color: white,
+    fontSize: 22,
+    textAlign: 'center',
   },
 });
 
@@ -268,4 +450,3 @@ function mapStateToProps(state, { navigation }) {
 }
 
 export default connect(mapStateToProps)(Quiz);
-

@@ -1,24 +1,24 @@
 import React from 'react';
 import { TouchableOpacity, Platform, Text, StyleSheet } from 'react-native';
-import { darkGray, black, white } from '../utils/colors'
+import { darkGray, black, white, lightBlue } from '../utils/colors'
 
 const styles = StyleSheet.create({
   iosSubmitButton: {
-    backgroundColor: darkGray,
+    backgroundColor: lightBlue,
     padding: 10,
     borderColor: darkGray,  
-    borderRadius: 7,
+    borderRadius: 30,
     height: 45,
     marginLeft: 20,
     marginRight: 20,
   },
   androidSubmitButton: {
-    backgroundColor: white,
+    backgroundColor: lightBlue,
     padding: 10,
     paddingLeft: 30,
     paddingRight: 30,
     height: 45,
-    borderRadius: 2,
+    borderRadius: 30,
     alignSelf: 'flex-end',
     justifyContent: 'center',
     alignItems: 'center',
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const SubmitButton = ({ onPress, disabled }) => (
+export const SubmitButton = ({ onPress, disabled, text }) => (
   <TouchableOpacity
     style={
       Platform.OS === 'ios'
@@ -39,6 +39,6 @@ export const SubmitButton = ({ onPress, disabled }) => (
     }
     onPress={onPress}
     disabled={disabled}>
-    <Text style={styles.submitButtonText}>Submit</Text>
+    <Text style={styles.submitButtonText}>{text}</Text>
   </TouchableOpacity>
 );

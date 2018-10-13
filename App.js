@@ -10,8 +10,9 @@ import AddDeck from './components/AddDeck'
 import AddCard from './components/AddCard'
 import DeckDetail from './components/DeckDetail'
 import Quiz from './components/Quiz'
-import { darkGray, white } from './utils/colors'
+import { darkGray, white, lightBlue } from './utils/colors'
 import reducer from './reducers'
+import { setLocalNotification } from './utils/helpers'
 
 function UdaciStatusBar ({backgroundColor, ...props}) {
   return (
@@ -41,10 +42,10 @@ const Tabs = TabNavigator({
     header: null
   },
   tabBarOptions: {
-    activeTintColor: Platform.OS === 'ios' ? darkGray : white,
+    activeTintColor: Platform.OS === 'ios' ? lightBlue : white,
     style: {
       height: 56,
-      backgroundColor: Platform.OS === 'ios' ? white : darkGray,
+      backgroundColor: Platform.OS === 'ios' ? white : lightBlue,
       shadowColor: 'rgba(0, 0, 0, 0.24)',
       shadowOffset: {
         width: 0,
@@ -60,42 +61,48 @@ const MainNavigator = StackNavigator({
   Home: {
     screen: Tabs,
     navigationOptions: {
-      headerTintColor: darkGray,
+      headerTintColor: white,
       headerStyle: {
-        backgroundColor: white
+        backgroundColor: lightBlue
       }
     }
   },
   DeckDetail: {
     screen: DeckDetail,
     navigationOptions: {
-      headerTintColor: darkGray,
+      headerTintColor: white,
       headerStyle: {
-        backgroundColor: white,
+        backgroundColor: lightBlue,
       }
     }
   },
   AddCard: {
     screen: AddCard,
     navigationOptions: {
-      headerTintColor: darkGray,
+      headerTintColor: white,
       headerStyle: {
-        backgroundColor: white,
+        backgroundColor: lightBlue,
       }
     }
   },
   Quiz: {
     screen: Quiz,
     navigationOptions: {
-      headerTintColor: darkGray,
+      headerTintColor: white,
       headerStyle: {
-        backgroundColor: white,
+        backgroundColor: lightBlue,
       }
     }
   }
 })
 
 export default class App extends React.Component {
+  componentDidMount() {
+    //if (Platform.OS === 'ios') {
+      setLocalNotification();
+    //}
+  }
+
   render() {
     return (
       <Provider store={createStore(reducer)}>

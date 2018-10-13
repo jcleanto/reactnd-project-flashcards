@@ -10,7 +10,7 @@ import {
   Keyboard
 } from 'react-native';
 import { connect } from 'react-redux';
-import { darkGray } from '../utils/colors';
+import { darkGray, lightBlue } from '../utils/colors';
 import { FormErrors } from './FormErrors'
 import { SubmitButton } from './SubmitButton'
 import { addDeck } from '../actions'
@@ -95,7 +95,7 @@ class AddDeck extends Component {
           />
           <FormErrors formErrors={this.state.formErrors} />
           <View style={{ height: 10 }} />
-          <SubmitButton onPress={this.onSubmit} disabled={!titleValid} />
+          <SubmitButton onPress={this.onSubmit} disabled={!titleValid} text={'Create Deck'} />
         </View>
       </KeyboardAvoidingView>
     );
@@ -113,16 +113,17 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   inputText: {
-    fontSize: 32,
+    fontSize: 22,
     borderRadius: 6,
-    borderColor: darkGray,
+    borderColor: lightBlue,
     borderWidth: 1,
     margin: 10,
     padding: 10
   },
   text: {
-    fontSize: 20,
-    marginLeft: 10
+    fontSize: 16,
+    marginLeft: 10,
+    color: lightBlue,
   }
 });
 

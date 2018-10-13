@@ -1,21 +1,29 @@
-import { RECEIVE_DECKS, ADD_DECK, ADD_CARD } from '../actions';
+import { RECEIVE_DECKS, ADD_DECK, DELETE_DECK, ADD_CARD } from '../actions';
 
 function decks(state = {}, action) {
+  const { decks, deck } = action
   switch (action.type) {
     case RECEIVE_DECKS:
       return {
         ...state,
-        ...action.decks,
+        ...decks,
       };
     case ADD_DECK:
       return {
         ...state,
-        ...action.deck,
+        ...deck,
+      };
+    case DELETE_DECK:
+      return {
+        ...state,
+        decks: {
+          [deck.title]: null,
+        },
       };
     case ADD_CARD:
       return {
         ...state,
-        ...action.deck,
+        ...deck,
       };
     default:
       return state;

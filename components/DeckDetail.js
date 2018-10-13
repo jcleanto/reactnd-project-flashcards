@@ -5,9 +5,20 @@ import {
   Text,
   StyleSheet,
   Platform,
+  ScrollView
 } from 'react-native';
 import { connect } from 'react-redux';
-import { white, orange, darkGray, black } from '../utils/colors';
+import {
+  white,
+  orange,
+  darkGray,
+  black,
+  aliceBlue,
+  borderAliceBlue,
+  mediumGray,
+  gainsbroGray,
+  lightBlue,
+} from '../utils/colors';
 
 function AddCardBtn({ onPress }) {
   return (
@@ -21,14 +32,17 @@ function AddCardBtn({ onPress }) {
   );
 }
 
-function StartQuizBtn({ onPress }) {
+function StartQuizBtn({ onPress, disabled }) {
   return (
     <TouchableOpacity
       style={
-        Platform.OS === 'ios' ? styles.iosStartQuizBtn : styles.androidStartQuizBtn
+        Platform.OS === 'ios'
+          ? styles.iosStartQuizBtn
+          : styles.androidStartQuizBtn
       }
-      onPress={onPress}>
-      <Text style={styles.startQuizBtnText}>Start Quiz</Text>
+      onPress={onPress}
+      disabled={disabled}>
+      <Text style={styles.startQuizBtnText}>Start a Quiz</Text>
     </TouchableOpacity>
   );
 }
@@ -50,25 +64,33 @@ class DeckDetail extends Component {
     const { deckId, deck } = this.props;
 
     return (
-      <View style={styles.detail}>
-        <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 46, color: white }}>{deck.title}</Text>
-          <Text style={{ fontSize: 18, color: orange }}>
-            {deck.questions.length} cards
-          </Text>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }}>
+        <View style={styles.detail}>
+          <View
+            style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 46, color: mediumGray, fontWeight: 'bold' }}>
+              {deck.title}
+            </Text>
+            <Text style={{ fontSize: 28, color: gainsbroGray }}>
+              {deck.questions.length} cards
+            </Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <AddCardBtn
+              onPress={() =>
+                this.props.navigation.navigate('AddCard', { deckId: deckId })
+              }
+            />
+            <View style={{ height: 20 }} />
+            <StartQuizBtn
+              disabled={deck.questions.length === 0}
+              onPress={() =>
+                this.props.navigation.navigate('Quiz', { deckId: deckId })
+              }
+            />
+          </View>
         </View>
-        <View style={{ flex: 1 }}>
-          <AddCardBtn onPress={() => this.props.navigation.navigate(
-              'AddCard',
-              { deckId: deckId }
-            )} />
-          <View style={{height:20}} />
-          <StartQuizBtn onPress={() => this.props.navigation.navigate(
-              'Quiz',
-              { deckId: deckId }
-            )} />
-        </View>
-      </View>
+      </ScrollView>  
     );
   }
 }
@@ -78,8 +100,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: darkGray,
-    borderRadius: Platform.OS === 'ios' ? 16 : 2,
+    backgroundColor: aliceBlue,
+    borderRadius: 2,
+    borderColor: borderAliceBlue,
+    border: 1,
     padding: 20,
     marginLeft: 10,
     marginRight: 10,
@@ -96,8 +120,8 @@ const styles = StyleSheet.create({
   iosAddCardBtn: {
     backgroundColor: white,
     padding: 10,
-    borderColor: black,  
-    borderRadius: 7,
+    borderColor: black,
+    borderRadius: 30,
     height: 45,
     marginLeft: 20,
     marginRight: 20,
@@ -108,32 +132,33 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingRight: 30,
     height: 45,
-    borderRadius: 2,
+    borderRadius: 30,
     alignSelf: 'flex-end',
     justifyContent: 'center',
     alignItems: 'center',
   },
   addCardBtnText: {
-    color: black,
+    color: lightBlue,
     fontSize: 22,
     textAlign: 'center',
+    width: 200
   },
   iosStartQuizBtn: {
-    backgroundColor: black,
+    backgroundColor: lightBlue,
     padding: 10,
-    borderColor: black,  
-    borderRadius: 7,
+    borderColor: black,
+    borderRadius: 30,
     height: 45,
     marginLeft: 20,
     marginRight: 20,
   },
   androidStartQuizBtn: {
-    backgroundColor: white,
+    backgroundColor: lightBlue,
     padding: 10,
     paddingLeft: 30,
     paddingRight: 30,
     height: 45,
-    borderRadius: 2,
+    borderRadius: 30,
     alignSelf: 'flex-end',
     justifyContent: 'center',
     alignItems: 'center',
