@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
     backgroundColor: aliceBlue,
     borderRadius: 2,
     borderColor: borderAliceBlue,
-    border: 1,
     padding: 20,
     marginLeft: 10,
     marginRight: 10,
