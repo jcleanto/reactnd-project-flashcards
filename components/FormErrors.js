@@ -11,7 +11,7 @@ export const FormErrors = ({ formErrors }) => (
           </Text>
         );
       } else {
-        return '';
+        return '<Text />';
       }
     })}
   </View>
